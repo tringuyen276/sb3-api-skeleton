@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Application<sb3-api-skeleton>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.digiex.utility.Application",
+            "projectName": "sb3-api-skeleton",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

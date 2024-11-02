@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="9.3">
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/Application.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/config/WebConfig.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/config/AppConfig.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/repository/UserRepository.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/repository/PermissionRepository.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/repository/RoleReposity.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/advice/ApplicationExceptionHandler.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/controller/DummyController.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/controller/UserController.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/model/User.java">
+<error line="3" column="27" severity="warning" message="Using the &apos;.*&apos; form of import should be avoided - jakarta.persistence.*." source="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck"/>
+<error line="5" column="17" severity="warning" message="Using the &apos;.*&apos; form of import should be avoided - java.util.*." source="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck"/>
+<error line="7" column="14" severity="warning" message="Using the &apos;.*&apos; form of import should be avoided - lombok.*." source="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck"/>
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/model/req/LoginRequest.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/model/req/DummyReq.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/model/Permission.java">
+<error line="3" column="27" severity="warning" message="Using the &apos;.*&apos; form of import should be avoided - jakarta.persistence.*." source="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck"/>
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/model/Role.java">
+<error line="3" column="27" severity="warning" message="Using the &apos;.*&apos; form of import should be avoided - jakarta.persistence.*." source="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck"/>
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/service/JwtService.java">
+<error line="41" column="38" severity="warning" message="Parameter name &apos;Token&apos; must match pattern &apos;^[a-z]([a-z0-9][a-zA-Z0-9]*)?$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ParameterNameCheck"/>
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/web/service/UserService.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/exception/ApplicationErrorCode.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/utility/web/advice/ExceptionHandlerAdvice.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/utility/web/model/res/ErrorCode.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/utility/web/model/res/FieldError.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/utility/web/model/res/ApiResp.java">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/resources/messages_en.properties">
+</file>
+<file name="/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/resources/application.properties">
+</file>
+</checkstyle>
