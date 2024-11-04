@@ -1,5 +1,6 @@
 package com.digiex.utility.web.controller;
 
+import com.digiex.utility.web.model.req.LoginRequest;
 import com.digiex.utility.web.service.JwtService;
 import com.digiex.utility.web.service.UserService;
 import jakarta.validation.Valid;
