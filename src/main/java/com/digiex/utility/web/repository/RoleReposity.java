@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface RoleReposity extends JpaRepository<Role, UUID> {
   Role findRoleByName(String name);
 
-  Role findRoleById(String id);
+  Role findRoleById(UUID id);
 }
