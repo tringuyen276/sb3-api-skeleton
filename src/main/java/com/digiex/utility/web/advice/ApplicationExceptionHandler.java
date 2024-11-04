@@ -45,4 +45,11 @@ public class ApplicationExceptionHandler extends ExceptionHandlerAdvice {
   public ResponseEntity<?> handle(HttpServletRequest request, NoResourceFoundException e) {
     return error(ApplicationErrorCode.INVALID_HTTP_REQUEST_RESOURCE, e.getResourcePath());
   }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<?> handle(HttpServletRequest request, Exception e) {
+    log.error("{}", ExceptionUtils.getStackTrace(e));
+
+    return error(ApplicationErrorCode.INVALID_HTTP_REQUEST_RESOURCE, "Invalid resource");
+  }
 }

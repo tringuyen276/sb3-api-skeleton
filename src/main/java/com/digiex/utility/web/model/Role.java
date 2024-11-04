@@ -35,7 +35,11 @@ public class Role {
   @JoinTable(
       name = "role_permissions",
       joinColumns = @JoinColumn(name = "role_id"),
-      inverseJoinColumns = @JoinColumn(name = "access_id")) // Ensure this matches your schema
+      inverseJoinColumns = @JoinColumn(name = "access_id")) // Ensure
+  // this
+  // matches
+  // your
+  // schema
   private Set<Permission> permissions;
 
   @Column(name = "created_at")

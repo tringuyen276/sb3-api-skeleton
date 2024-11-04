@@ -3,11 +3,15 @@ package com.digiex.utility.web.service;
 import com.digiex.utility.web.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import java.sql.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+@Service
 public class JwtService {
   @Value("${jwt.secretKey}")
   private String base64SecretKey;
@@ -17,9 +21,10 @@ public class JwtService {
 
   private SecretKey secretKey;
 
-  public JwtService() {
-    this.secretKey = Keys.hmacShaKeyFor(base64SecretKey.getBytes());
 
+  @PostConstruct
+  public void init() {
+    this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
   }
 
   public String generateToken(User user) {
