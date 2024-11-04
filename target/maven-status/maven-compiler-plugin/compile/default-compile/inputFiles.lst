@@ -1,7 +1,9 @@
 /Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/Application.java
 /Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/config/AppConfig.java
+/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/config/DataInitializer.java
 /Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/config/WebConfig.java
 /Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/exception/ApplicationErrorCode.java
+/Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/util/PasswordUtil.java
 /Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/utility/web/advice/ExceptionHandlerAdvice.java
 /Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/utility/web/model/res/ApiResp.java
 /Users/tringuyen/Develop/java/JavaBasic/sb3-api-skeleton/src/main/java/com/digiex/utility/utility/web/model/res/ErrorCode.java

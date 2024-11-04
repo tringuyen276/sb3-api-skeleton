@@ -42,7 +42,7 @@ public class User {
   @Column(name = "deleted_at")
   private Timestamp deletedAt;
 
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_roles",
       joinColumns = @JoinColumn(name = "user_id"),

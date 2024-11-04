@@ -1,5 +1,6 @@
 package com.digiex.utility.web.service;
 
+import com.digiex.utility.util.PasswordUtil;
 import com.digiex.utility.web.model.User;
 import com.digiex.utility.web.repository.UserRepository;
 import java.util.Optional;
@@ -13,6 +14,7 @@ public class UserService {
   @Autowired private UserRepository userRepository;
 
   public User saveUser(User user) {
+    user.setPassword(PasswordUtil.encode(user.getPassword()));
     return userRepository.save(user);
   }
 
@@ -22,5 +24,13 @@ public class UserService {
 
   public User findUserByUsername(String username) {
     return userRepository.findByUsername(username);
+  }
+
+  public boolean validUser(String username, String password) {
+    User user = findUserByUsername(username);
+    if (user == null) {
+      return false;
+    }
+    return PasswordUtil.comapareHash(password, user.getPassword());
   }
 }

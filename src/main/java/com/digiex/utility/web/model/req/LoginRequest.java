@@ -1,8 +1,14 @@
 package com.digiex.utility.web.model.req;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
 public class LoginRequest {
-  private String username;
-  private String password;
+  @NotBlank @NotNull private String username;
+
+  @NotNull @NotBlank private String password;
 
   public LoginRequest() {}
 
