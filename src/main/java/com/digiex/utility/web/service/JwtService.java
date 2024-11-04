@@ -19,6 +19,7 @@ public class JwtService {
 
   public JwtService() {
     this.secretKey = Keys.hmacShaKeyFor(base64SecretKey.getBytes());
+
   }
 
   public String generateToken(User user) {
