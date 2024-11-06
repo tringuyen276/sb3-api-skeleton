@@ -19,8 +19,8 @@ public class RoleController {
     RoleReposity roleReposity;
 
     @PostMapping("/Role")
-    public ResponseEntity<Object> CreateRole(@RequestBody Role role) {
-
+    public ResponseEntity<Object> CreateRole(@RequestBody Role role)
+    {
         Role savedRole = roleReposity.save(role);
         URI location = ServletUriComponentsBuilder.
                 fromCurrentRequest().
@@ -58,7 +58,7 @@ public class RoleController {
     @DeleteMapping("/Role/{id}")
     public ResponseEntity<String> deleteRole(@PathVariable Long id) {
         try {
-            roleReposity.deleteById(id);
+//            roleReposity.deleteById(id);
             return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("Error deleting Role: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
