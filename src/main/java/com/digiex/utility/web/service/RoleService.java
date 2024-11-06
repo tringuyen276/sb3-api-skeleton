@@ -18,7 +18,7 @@ public class RoleService {
     private RoleReposity roleReposity;
 
 
-    public Set<Permission> findPermissionByRoleId(UUID roleId){
+    public Set<Permission> findPermissionByRoleId(Long roleId){
         Optional< Role> role=roleReposity.findById(roleId);
         return role.map(Role::getPermissions).orElse(Collections.emptySet());
     }

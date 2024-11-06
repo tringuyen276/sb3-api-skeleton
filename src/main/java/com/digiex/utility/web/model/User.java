@@ -1,5 +1,6 @@
 package com.digiex.utility.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
@@ -8,10 +9,12 @@ import lombok.*;
 
 @Entity
 @Table(name = "users")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
+@Getter
+@Setter
 public class User {
   @Id
   @GeneratedValue(generator = "UUID")
@@ -22,6 +25,7 @@ public class User {
   private String username;
 
   @Column(name = "password", length = 60, nullable = false)
+  @JsonIgnore
   private String password;
 
   @Column(name = "email", length = 50, nullable = false)
@@ -40,12 +44,14 @@ public class User {
   private Timestamp updatedAt;
 
   @Column(name = "deleted_at")
+  @JsonIgnore
   private Timestamp deletedAt;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(
-      name = "user_roles",
-      joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Role> roles;
+          name = "user_roles",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "role_id")
+  )
+  private Set<Role> roles = new HashSet<>();
 }

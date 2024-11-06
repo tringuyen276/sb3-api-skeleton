@@ -1,10 +1,18 @@
 package com.digiex.utility.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "permission")
+@Getter
+@Setter
 public class Permission {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +33,8 @@ public class Permission {
   @Column(name = "deleted_at")
   private Timestamp deletedAt;
 
-  public Permission() {}
+  @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+  @JsonIgnore
+  private Set<Role> roles = new HashSet<>();
 
-  public Permission(Integer id, String name, String description) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-  }
 }
