@@ -51,6 +51,7 @@ public class UserController {
 
   @GetMapping("/User/{id}")
   public ResponseEntity<User> getUserById(@PathVariable UUID id) {
+
     Optional<User> user = userRepository.findById(id);
     return user.map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());
@@ -78,7 +79,7 @@ public class UserController {
   @DeleteMapping("/User/{id}")
   public ResponseEntity<String> deleteUser(@PathVariable UUID id){
     try {
-    userRepository.deleteById(id);
+//    userRepository.deleteById(id);
       return new ResponseEntity<>("User deleted successfully", HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>("Error deleting user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
