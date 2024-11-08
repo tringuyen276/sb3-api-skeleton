@@ -1,7 +1,10 @@
 package com.digiex.utility.web.controller;
 
 import com.digiex.utility.web.model.Role;
-import com.digiex.utility.web.repository.RoleReposity;
+import com.digiex.utility.web.model.dto.RoleDTO;
+import com.digiex.utility.web.service.RoleService;
+import com.digiex.utility.web.service.imp.RoleServiceImp;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,45 +14,42 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Optional;
-import java.util.UUID;
+
 @Transactional
 @RestController
 public class RoleController {
     @Autowired
-    RoleReposity roleReposity;
+    private ModelMapper modelMapper;
+    RoleServiceImp roleServiceImp;
+    public RoleController(RoleServiceImp roleServiceImp){
+        this.roleServiceImp=roleServiceImp;
+    }
 
     @PostMapping("/Role")
-    public ResponseEntity<Object> CreateRole(@RequestBody Role role)
+    public ResponseEntity<RoleDTO> CreateRole(@RequestBody RoleDTO roleDTO)
     {
-        Role savedRole = roleReposity.save(role);
+        RoleDTO postResponse=roleServiceImp.save(roleDTO);
         URI location = ServletUriComponentsBuilder.
                 fromCurrentRequest().
                 path("/{id}").
-                buildAndExpand(savedRole.getId()).
+                buildAndExpand(postResponse.getId()).
                 toUri();
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(postResponse);
     }
 
     @GetMapping("/Role/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
-        Optional<Role> role = roleReposity.findById(id);
-//        System.out.println(roleReposity.findRoleById(id).get().getUsers());
+    public ResponseEntity<RoleDTO> getRoleById(@PathVariable Long id) {
+        Optional<RoleDTO> role = roleServiceImp.getRoleById(id);
         return role.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping("/Role/{id}")
-    public ResponseEntity<Role> updateRole(@PathVariable Long id, @RequestBody Role updatedRole) {
-        Optional<Role> existingRole = roleReposity.findById(id);
-
+    public ResponseEntity<RoleDTO> updateRole(@PathVariable Long id, @RequestBody RoleDTO updatedRoleDTO) {
+        Optional<RoleDTO> existingRole = roleServiceImp.getRoleById(id);
         if (existingRole.isPresent()) {
-            Role role = existingRole.get();
-            role.setName(updatedRole.getName());
-            role.setDescription(updatedRole.getDescription());
-            role.setPermissions(updatedRole.getPermissions());
-            role.setUsers(updatedRole.getUsers());
-            roleReposity.save(role);
-            return ResponseEntity.ok(role);
+            RoleDTO updatedRole = roleServiceImp.updateRole(id, updatedRoleDTO);
+            return ResponseEntity.ok(updatedRole);
         } else {
             return ResponseEntity.notFound().build();
         }
