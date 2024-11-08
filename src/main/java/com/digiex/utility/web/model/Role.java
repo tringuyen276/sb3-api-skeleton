@@ -18,7 +18,7 @@ import lombok.*;
 public class Role {
 
   @Id
-  @GeneratedValue(generator = "UUID")
+  @GeneratedValue(strategy = GenerationType.SEQUENCE)
   @Column(name = "id", updatable = false, nullable = false)
   private Long id; // Change from Integer to UUID
 

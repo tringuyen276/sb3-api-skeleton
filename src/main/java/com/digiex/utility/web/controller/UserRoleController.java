@@ -39,11 +39,11 @@ public class UserRoleController {
        return ResponseEntity.status(HttpStatus.OK).body("Role added to User successfully");
     }
 
-    @PutMapping("/roles/{id}")
-    @Transactional
-    public ResponseEntity<User> updateUserRoles(@PathVariable UUID id, @RequestBody List<Long> roleIds){
-        System.out.println(roleIds);
-        User updatedUser = userService.updateUserRoles(id, roleIds);
-        return ResponseEntity.ok(updatedUser);
-    }
+//    @PutMapping("/roles/{id}")
+//    @Transactional
+//    public ResponseEntity<User> updateUserRoles(@PathVariable UUID id, @RequestBody List<Long> roleIds){
+//        System.out.println(roleIds);
+//        User updatedUser = userService.updateUserRoles(id, roleIds);
+//        return ResponseEntity.ok(updatedUser);
+//    }
 }

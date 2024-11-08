@@ -14,6 +14,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class JwtService {
   @Value("${jwt.secretKey}")
@@ -52,7 +53,20 @@ public class JwtService {
     return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
   }
 
+  public boolean validateToken(String token, String username) {
+    String extractedName=extractUsername(token);
+    return (username.equals(extractUsername(token)) && !isTokenExpired(token));
+  }
+
   public String extractUserId(String Token) {
     return extractAllClaims(Token).getId();
+  }
+  public String extractUsername(String token) {
+    return extractAllClaims(token).getSubject();
+  }
+  public boolean isTokenExpired(String token) {
+    System.out.println(new Date(System.currentTimeMillis()));
+    return extractAllClaims(token).getExpiration().before(new Date(86400000));
+
   }
 }

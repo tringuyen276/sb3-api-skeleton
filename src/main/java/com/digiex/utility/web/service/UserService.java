@@ -3,31 +3,56 @@ package com.digiex.utility.web.service;
 import com.digiex.utility.util.PasswordUtil;
 import com.digiex.utility.web.model.Role;
 import com.digiex.utility.web.model.User;
+import com.digiex.utility.web.model.dto.RoleDTO;
+import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.repository.RoleReposity;
 import com.digiex.utility.web.repository.UserRepository;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+import com.digiex.utility.web.service.imp.UserServiceImp;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserService implements UserServiceImp {
 
-  @Autowired private UserRepository userRepository;
-  @Autowired private RoleReposity roleReposity;
-
-  public User saveUser(User user) {
+  @Autowired
+  private RoleReposity roleReposity;
+  @Autowired
+  private ModelMapper modelMapper;
+  @Autowired
+  private UserRepository userRepository;
+  @Override
+  public UserDTO save(UserDTO userDTO) {
+    User user = modelMapper.map(userDTO, User.class);
     user.setPassword(PasswordUtil.encode(user.getPassword()));
-    return userRepository.save(user);
+    User savedUser=userRepository.save(user);
+    return modelMapper.map(savedUser, UserDTO.class);
+  }
+  @Override
+  public Optional<UserDTO> getUserById(UUID id) {
+    Optional<User> user = userRepository.findById(id);
+    return user.map(r -> modelMapper.map(r, UserDTO.class));
   }
 
-  public Optional<User> findUserById(UUID id) {
-    return userRepository.findById(id);
+  @Override
+  public UserDTO updateUser(UUID userId, UserDTO updateUser) {
+    User existingUser = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("Role not found with id: " + userId));
+    existingUser.setFirstName(updateUser.getFirstName());
+    existingUser.setLastName(updateUser.getLastName());
+    existingUser.setEmail(updateUser.getEmail());
+    existingUser.setUsername(updateUser.getUsername());
+      User savedUser=userRepository.save(existingUser);
+      return  modelMapper.map(savedUser, UserDTO.class);
+    }
+
+  @Override
+  public void deleteUser(UUID id) {
+
   }
 
   public User findUserByUsername(String username) {
@@ -41,15 +66,7 @@ public class UserService {
     }
     return PasswordUtil.comapareHash(password, user.getPassword());
   }
-
-
-  public User updateUserRoles(UUID userId, List<Long> roleIds) {
-    User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-    Set<Role> roles = roleReposity.findAllById(roleIds).stream().collect(Collectors.toSet());
-    user.setRoles(roles);
-    return userRepository.save(user);
   }
 
 
-}
+

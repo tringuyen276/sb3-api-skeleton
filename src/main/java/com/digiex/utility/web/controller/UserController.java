@@ -1,12 +1,14 @@
 package com.digiex.utility.web.controller;
 
-import com.digiex.utility.util.PasswordUtil;
 import com.digiex.utility.web.model.User;
+import com.digiex.utility.web.model.dto.RoleDTO;
+import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.model.req.LoginRequest;
-import com.digiex.utility.web.repository.UserRepository;
 import com.digiex.utility.web.service.JwtService;
 import com.digiex.utility.web.service.UserService;
+import com.digiex.utility.web.service.imp.UserServiceImp;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +24,13 @@ import java.util.UUID;
 public class UserController {
   @Autowired private UserService userService;
   @Autowired private JwtService jwtService;
-  @Autowired private UserRepository userRepository;
+  @Autowired
+  private ModelMapper modelMapper;
+    UserServiceImp userServiceImp;
+    public UserController(UserServiceImp userServiceImp){
+    this.userServiceImp=userServiceImp;
+  }
+
 
   @PostMapping("/login")
   public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
@@ -38,39 +46,30 @@ public class UserController {
 
 
   @PostMapping("/User")
-  public ResponseEntity<Object> CreateUser(@RequestBody User user){
-
-    User savedUser=userService.saveUser(user);
+  public ResponseEntity<Object> CreateUser(@RequestBody UserDTO userDTO){
+    UserDTO savedUser=userServiceImp.save(userDTO);
     URI location= ServletUriComponentsBuilder.
             fromCurrentRequest().
             path("/{id}").
             buildAndExpand(savedUser.getId()).
             toUri();
-    return ResponseEntity.created(location).build();
+    return ResponseEntity.created(location).body(savedUser);
   }
 
   @GetMapping("/User/{id}")
-  public ResponseEntity<User> getUserById(@PathVariable UUID id) {
-
-    Optional<User> user = userRepository.findById(id);
+  public ResponseEntity<UserDTO> getUserById(@PathVariable UUID id) {
+    Optional<UserDTO> user = userServiceImp.getUserById(id);
     return user.map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  @PutMapping("/User/{id}")
-  public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody User updatedUser) {
-    Optional<User> existingUser = userRepository.findById(id);
 
-    if (existingUser.isPresent())
-    {
-      User user = existingUser.get();
-      user.setFirstName(updatedUser.getFirstName());
-      user.setLastName(updatedUser.getLastName());
-      user.setEmail(updatedUser.getEmail());
-      user.setPassword(updatedUser.getPassword());
-      user.setPassword(PasswordUtil.encode(user.getPassword()));
-      userRepository.save(user);
-      return ResponseEntity.ok(user);
+  @PutMapping("/User/{id}")
+  public ResponseEntity<UserDTO> updateUser(@PathVariable UUID id, @RequestBody UserDTO updatedUserDTO) {
+    Optional<UserDTO> existingUser = userServiceImp.getUserById(id);
+    if(existingUser.isPresent()){
+      UserDTO updatedUser= userServiceImp.updateUser(id,updatedUserDTO);
+      return ResponseEntity.ok(updatedUser);
     } else {
       return ResponseEntity.notFound().build();
     }

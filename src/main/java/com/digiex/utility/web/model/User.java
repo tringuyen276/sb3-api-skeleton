@@ -1,6 +1,7 @@
 package com.digiex.utility.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
@@ -25,7 +26,7 @@ public class User {
   private String username;
 
   @Column(name = "password", length = 60, nullable = false)
-  @JsonIgnore
+  @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
   private String password;
 
   @Column(name = "email", length = 50, nullable = false)
