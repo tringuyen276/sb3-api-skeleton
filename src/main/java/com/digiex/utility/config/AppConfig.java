@@ -21,7 +21,7 @@ public class AppConfig {
         JsonMapper.builder()
             .accessorNaming(new Provider().withBuilderPrefix(""))
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-                .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

@@ -10,6 +10,7 @@ public class DummyController {
 
   @GetMapping
   public ResponseEntity<?> get() {
+
     return ResponseEntity.ok().body(ApiResp.builder().success(true).build());
   }
 }

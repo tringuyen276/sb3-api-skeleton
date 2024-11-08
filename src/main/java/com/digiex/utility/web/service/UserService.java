@@ -1,17 +1,13 @@
 package com.digiex.utility.web.service;
 
 import com.digiex.utility.util.PasswordUtil;
-import com.digiex.utility.web.model.Role;
 import com.digiex.utility.web.model.User;
-import com.digiex.utility.web.model.dto.RoleDTO;
 import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.repository.RoleReposity;
 import com.digiex.utility.web.repository.UserRepository;
-
+import com.digiex.utility.web.service.imp.UserServiceImp;
 import java.util.Optional;
 import java.util.UUID;
-
-import com.digiex.utility.web.service.imp.UserServiceImp;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,19 +15,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements UserServiceImp {
 
-  @Autowired
-  private RoleReposity roleReposity;
-  @Autowired
-  private ModelMapper modelMapper;
-  @Autowired
-  private UserRepository userRepository;
+  @Autowired private RoleReposity roleReposity;
+  @Autowired private ModelMapper modelMapper;
+  @Autowired private UserRepository userRepository;
+
   @Override
   public UserDTO save(UserDTO userDTO) {
     User user = modelMapper.map(userDTO, User.class);
     user.setPassword(PasswordUtil.encode(user.getPassword()));
-    User savedUser=userRepository.save(user);
+    User savedUser = userRepository.save(user);
     return modelMapper.map(savedUser, UserDTO.class);
   }
+
   @Override
   public Optional<UserDTO> getUserById(UUID id) {
     Optional<User> user = userRepository.findById(id);
@@ -40,24 +35,24 @@ public class UserService implements UserServiceImp {
 
   @Override
   public UserDTO updateUser(UUID userId, UserDTO updateUser) {
-    User existingUser = userRepository.findById(userId)
+    User existingUser =
+        userRepository
+            .findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("Role not found with id: " + userId));
     existingUser.setFirstName(updateUser.getFirstName());
     existingUser.setLastName(updateUser.getLastName());
     existingUser.setEmail(updateUser.getEmail());
     existingUser.setUsername(updateUser.getUsername());
-      User savedUser=userRepository.save(existingUser);
-      return  modelMapper.map(savedUser, UserDTO.class);
-    }
-
-  @Override
-  public void deleteUser(UUID id) {
-
+    User savedUser = userRepository.save(existingUser);
+    return modelMapper.map(savedUser, UserDTO.class);
   }
 
   public User findUserByUsername(String username) {
     return userRepository.findByUsername(username);
   }
+
+  @Override
+  public void deleteUser(UUID id) {}
 
   public boolean validUser(String username, String password) {
     User user = findUserByUsername(username);
@@ -66,7 +61,4 @@ public class UserService implements UserServiceImp {
     }
     return PasswordUtil.comapareHash(password, user.getPassword());
   }
-  }
-
-
-
+}

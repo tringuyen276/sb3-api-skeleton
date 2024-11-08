@@ -26,7 +26,7 @@ public class User {
   private String username;
 
   @Column(name = "password", length = 60, nullable = false)
-  @JsonProperty(access= JsonProperty.Access.WRITE_ONLY)
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
 
   @Column(name = "email", length = 50, nullable = false)
@@ -50,9 +50,8 @@ public class User {
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinTable(
-          name = "user_roles",
-          joinColumns = @JoinColumn(name = "user_id"),
-          inverseJoinColumns = @JoinColumn(name = "role_id")
-  )
+      name = "user_roles",
+      joinColumns = @JoinColumn(name = "user_id"),
+      inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
 }

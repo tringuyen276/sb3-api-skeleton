@@ -2,12 +2,11 @@ package com.digiex.utility.web.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "permission")
@@ -36,5 +35,4 @@ public class Permission {
   @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JsonIgnore
   private Set<Role> roles = new HashSet<>();
-
 }

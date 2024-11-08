@@ -9,11 +9,9 @@ import jakarta.annotation.PostConstruct;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class JwtService {
@@ -25,7 +23,6 @@ public class JwtService {
 
   private SecretKey secretKey;
 
-
   @PostConstruct
   public void init() {
     this.secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -33,12 +30,12 @@ public class JwtService {
 
   public String generateToken(User user) {
     Claims claims = Jwts.claims().setSubject(user.getId().toString());
-    Map<String,Object> newUser= new HashMap<>();
-    newUser.put("id",user.getId());
-    newUser.put("userName",user.getUsername());
-    newUser.put("firstName",user.getFirstName());
-    newUser.put("lastName",user.getLastName());
-    newUser.put("role",user.getRoles());
+    Map<String, Object> newUser = new HashMap<>();
+    newUser.put("id", user.getId());
+    newUser.put("userName", user.getUsername());
+    newUser.put("firstName", user.getFirstName());
+    newUser.put("lastName", user.getLastName());
+    newUser.put("role", user.getRoles());
     claims.put("user", newUser);
 
     return Jwts.builder()
@@ -54,19 +51,20 @@ public class JwtService {
   }
 
   public boolean validateToken(String token, String username) {
-    String extractedName=extractUsername(token);
+    String extractedName = extractUsername(token);
     return (username.equals(extractUsername(token)) && !isTokenExpired(token));
   }
 
   public String extractUserId(String Token) {
     return extractAllClaims(Token).getId();
   }
+
   public String extractUsername(String token) {
     return extractAllClaims(token).getSubject();
   }
+
   public boolean isTokenExpired(String token) {
     System.out.println(new Date(System.currentTimeMillis()));
     return extractAllClaims(token).getExpiration().before(new Date(86400000));
-
   }
 }
