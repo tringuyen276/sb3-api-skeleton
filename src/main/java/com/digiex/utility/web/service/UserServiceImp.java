@@ -1,19 +1,25 @@
 package com.digiex.utility.web.service;
 
 import com.digiex.utility.util.PasswordUtil;
+import com.digiex.utility.web.model.Role;
 import com.digiex.utility.web.model.User;
+import com.digiex.utility.web.model.dto.RoleDTO;
 import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.repository.RoleReposity;
 import com.digiex.utility.web.repository.UserRepository;
-import com.digiex.utility.web.service.imp.UserServiceImp;
+import com.digiex.utility.web.service.imp.UserService;
+
+import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.UUID;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements UserServiceImp {
+public class UserServiceImp implements UserService {
 
   @Autowired private RoleReposity roleReposity;
   @Autowired private ModelMapper modelMapper;
@@ -28,21 +34,24 @@ public class UserService implements UserServiceImp {
   }
 
   @Override
-  public Optional<UserDTO> getUserById(UUID id) {
-    Optional<User> user = userRepository.findById(id);
-    return user.map(r -> modelMapper.map(r, UserDTO.class));
+  public UserDTO getUserById(UUID id) {
+    User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+    if(user.getDeletedAt()!=null){
+      throw new EntityNotFoundException("User with id " + id + " has already been deleted.");
+    };
+    return modelMapper.map(user, UserDTO.class);
   }
 
   @Override
   public UserDTO updateUser(UUID userId, UserDTO updateUser) {
-    User existingUser =
-        userRepository
-            .findById(userId)
-            .orElseThrow(() -> new IllegalArgumentException("Role not found with id: " + userId));
-    existingUser.setFirstName(updateUser.getFirstName());
-    existingUser.setLastName(updateUser.getLastName());
-    existingUser.setEmail(updateUser.getEmail());
-    existingUser.setUsername(updateUser.getUsername());
+    User user=modelMapper.map(updateUser,User.class);
+    User existingUser = userRepository.findById(userId).get();
+
+    existingUser.setFirstName(user.getFirstName());
+    existingUser.setLastName(user.getLastName());
+    existingUser.setEmail(user.getEmail());
+    existingUser.setUsername(user.getUsername());
+    existingUser.setRoles(user.getRoles());
     User savedUser = userRepository.save(existingUser);
     return modelMapper.map(savedUser, UserDTO.class);
   }
@@ -52,7 +61,12 @@ public class UserService implements UserServiceImp {
   }
 
   @Override
-  public void deleteUser(UUID id) {}
+  public UserDTO deleteUser(UUID id) {
+    User user=userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Permission not found with id: " + id));
+    user.setDeletedAt(new Timestamp(System.currentTimeMillis()));;
+    userRepository.save(user);
+    return modelMapper.map(user, UserDTO.class);
+  }
 
   public boolean validUser(String username, String password) {
     User user = findUserByUsername(username);
