@@ -1,5 +1,6 @@
 package com.digiex.utility.web.model.dto;
 
+import com.digiex.utility.web.model.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import java.sql.Timestamp;
@@ -20,11 +21,9 @@ public class UserDTO {
   private UUID id;
 
   @NotBlank(message = "First name is required")
-  @JsonProperty("first_name")
   private String firstName;
 
   @NotBlank(message = "Last name is required")
-  @JsonProperty("last_name")
   private String lastName;
 
   @NotBlank(message = "Username is required")
@@ -42,5 +41,5 @@ public class UserDTO {
   private Timestamp createdAt;
   private Timestamp updatedAt;
 
-  private Set<String> roles;
+  private Set<RoleDTO> roles;
 }

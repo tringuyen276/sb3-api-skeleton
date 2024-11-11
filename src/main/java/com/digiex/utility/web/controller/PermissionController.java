@@ -1,9 +1,12 @@
 package com.digiex.utility.web.controller;
 
+import com.digiex.utility.utility.web.model.res.ApiResp;
 import com.digiex.utility.web.model.dto.PermissionDTO;
-import com.digiex.utility.web.service.imp.PermissionServiceImp;
+import com.digiex.utility.web.service.imp.PermissionService;
 import java.net.URI;
 import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,50 +15,63 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
+@RequestMapping("/permission")
 public class PermissionController {
 
   @Autowired private ModelMapper modelMapper;
 
-  PermissionServiceImp permissionServiceImp;
+  PermissionService permissionService;
 
-  public PermissionController(PermissionServiceImp permissionServiceImp) {
-    this.permissionServiceImp = permissionServiceImp;
+  public PermissionController(PermissionService permissionService) {
+    this.permissionService = permissionService;
   }
 
-  @PostMapping("/Permission")
+  @PostMapping
   public ResponseEntity<Object> CreateRepository(@RequestBody PermissionDTO permissionDTO) {
-    PermissionDTO savedPermission = permissionServiceImp.save(permissionDTO);
+    PermissionDTO savedPermission = permissionService.save(permissionDTO);
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
             .buildAndExpand(savedPermission.getId())
             .toUri();
-    return ResponseEntity.created(location).body(savedPermission);
+    return ResponseEntity.created(location)
+            .body(ApiResp.builder().success(true).data(savedPermission).build());
   }
 
-  @GetMapping("/Permission/{id}")
-  public ResponseEntity<PermissionDTO> getPermissionById(@PathVariable int id) {
-    Optional<PermissionDTO> permission = permissionServiceImp.getPermissionById(id);
-    return permission.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-  }
+  @GetMapping("/{id}")
+  public ResponseEntity<?> getPermissionById(@PathVariable int id) {
+    try {
 
-  @PutMapping("/Permission/{id}")
-  public ResponseEntity<PermissionDTO> updateRole(
+      PermissionDTO permission = permissionService.getPermissionById(id);
+
+      return ResponseEntity.ok().body(ApiResp.builder().success(true).data(permission).build());
+    } catch (
+            EntityNotFoundException ex) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+              .body(ApiResp.ErrorResp.builder().message("Permission not found").build());
+    } catch (Exception ex) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+              .body(ApiResp.ErrorResp.builder().message("Internal server error").build());
+    }
+  }
+  @PutMapping("/{id}")
+  public ResponseEntity<?> updateRole(
       @PathVariable int id, @RequestBody PermissionDTO updatedPermissionDTO) {
-    Optional<PermissionDTO> existingPermission = permissionServiceImp.getPermissionById(id);
-    if (existingPermission.isPresent()) {
+    PermissionDTO existingPermission = permissionService.getPermissionById(id);
+    if (existingPermission!=null) {
       PermissionDTO updatedPermission =
-          permissionServiceImp.updatePermission(id, updatedPermissionDTO);
-      return ResponseEntity.ok(updatedPermission);
+          permissionService.updatePermission(id, updatedPermissionDTO);
+      return ResponseEntity.ok().body(ApiResp.builder().success(true).data(updatedPermission).build());
     } else {
-      return ResponseEntity.notFound().build();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND)
+              .body(ApiResp.ErrorResp.builder().message("Permission not found").build());
     }
   }
 
-  @DeleteMapping("/Permission/{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteRole(@PathVariable int id) {
     try {
-      //            permissionRepository.deleteById(id);
+                  permissionService.deleteRole(id);
       return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(

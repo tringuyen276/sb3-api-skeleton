@@ -4,12 +4,12 @@ import com.digiex.utility.web.model.dto.UserDTO;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserServiceImp {
+public interface UserService {
   UserDTO save(UserDTO userDTO);
 
   UserDTO updateUser(UUID id, UserDTO roleDTO);
 
-  void deleteUser(UUID id);
+  UserDTO deleteUser(UUID id);
 
-  Optional<UserDTO> getUserById(UUID id);
+  UserDTO getUserById(UUID id);
 }

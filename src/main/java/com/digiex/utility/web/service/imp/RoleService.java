@@ -3,12 +3,12 @@ package com.digiex.utility.web.service.imp;
 import com.digiex.utility.web.model.dto.RoleDTO;
 import java.util.Optional;
 
-public interface RoleServiceImp {
+public interface RoleService {
   RoleDTO save(RoleDTO roleDTO);
 
   RoleDTO updateRole(long id, RoleDTO roleDTO);
 
-  void deleteRole(long id);
+  RoleDTO deleteRole(long id);
 
-  Optional<RoleDTO> getRoleById(long id);
+ RoleDTO getRoleById(long id);
 }

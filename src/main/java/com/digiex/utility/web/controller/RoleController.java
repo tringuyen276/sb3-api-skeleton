@@ -1,9 +1,13 @@
 package com.digiex.utility.web.controller;
 
+import com.digiex.utility.utility.web.model.res.ApiResp;
 import com.digiex.utility.web.model.dto.RoleDTO;
-import com.digiex.utility.web.service.imp.RoleServiceImp;
+import com.digiex.utility.web.service.imp.RoleService;
+
 import java.net.URI;
 import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,51 +18,64 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Transactional
 @RestController
+@RequestMapping("/role")
 public class RoleController {
-  @Autowired private ModelMapper modelMapper;
-  RoleServiceImp roleServiceImp;
+    @Autowired
+    private ModelMapper modelMapper;
+    RoleService roleService;
 
-  public RoleController(RoleServiceImp roleServiceImp) {
-    this.roleServiceImp = roleServiceImp;
-  }
-
-  @PostMapping("/Role")
-  public ResponseEntity<RoleDTO> CreateRole(@RequestBody RoleDTO roleDTO) {
-    RoleDTO postResponse = roleServiceImp.save(roleDTO);
-    URI location =
-        ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/{id}")
-            .buildAndExpand(postResponse.getId())
-            .toUri();
-    return ResponseEntity.created(location).body(postResponse);
-  }
-
-  @GetMapping("/Role/{id}")
-  public ResponseEntity<RoleDTO> getRoleById(@PathVariable Long id) {
-    Optional<RoleDTO> role = roleServiceImp.getRoleById(id);
-    return role.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-  }
-
-  @PutMapping("/Role/{id}")
-  public ResponseEntity<RoleDTO> updateRole(
-      @PathVariable Long id, @RequestBody RoleDTO updatedRoleDTO) {
-    Optional<RoleDTO> existingRole = roleServiceImp.getRoleById(id);
-    if (existingRole.isPresent()) {
-      RoleDTO updatedRole = roleServiceImp.updateRole(id, updatedRoleDTO);
-      return ResponseEntity.ok(updatedRole);
-    } else {
-      return ResponseEntity.notFound().build();
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
     }
-  }
 
-  @DeleteMapping("/Role/{id}")
-  public ResponseEntity<String> deleteRole(@PathVariable Long id) {
-    try {
-      //            roleReposity.deleteById(id);
-      return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(
-          "Error deleting Role: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    @PostMapping
+    public ResponseEntity<?> CreateRole(@RequestBody RoleDTO roleDTO) {
+        RoleDTO postResponse = roleService.save(roleDTO);
+        URI location =
+                ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(postResponse.getId())
+                        .toUri();
+        return ResponseEntity.created(location)
+                .body(ApiResp.builder().success(true).data(postResponse).build());
     }
-  }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getRoleById(@PathVariable Long id) {
+        try {
+            RoleDTO role = roleService.getRoleById(id);
+            return ResponseEntity.ok().body(ApiResp.builder().success(true).data(role).build());
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResp.ErrorResp.builder().message("Role not found").build());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResp.ErrorResp.builder().message("Internal server error").build());
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateRole(
+            @PathVariable Long id, @RequestBody RoleDTO updatedRoleDTO) {
+
+        RoleDTO existingRole = roleService.getRoleById(id);
+        if (existingRole!=null) {
+            RoleDTO updatedRole = roleService.updateRole(id, updatedRoleDTO);
+            return ResponseEntity.ok().body(ApiResp.builder().success(true).data(updatedRole).build());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResp.ErrorResp.builder().message("Role not found").build());
+        }
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteRole(@PathVariable Long id) {
+        try {
+                        roleService.deleteRole(id);
+            return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    "Error deleting Role: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

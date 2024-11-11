@@ -3,15 +3,18 @@ package com.digiex.utility.web.service;
 import com.digiex.utility.web.model.Permission;
 import com.digiex.utility.web.model.dto.PermissionDTO;
 import com.digiex.utility.web.repository.PermissionRepository;
-import com.digiex.utility.web.service.imp.PermissionServiceImp;
 import java.sql.Timestamp;
 import java.util.Optional;
+
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.digiex.utility.web.service.imp.PermissionService;
 
 @Service
-public class PermissionService implements PermissionServiceImp {
+public class PermissionServiceImp implements PermissionService {
   @Autowired private PermissionRepository permissionRepository;
   @Autowired private ModelMapper modelMapper;
 
@@ -36,11 +39,19 @@ public class PermissionService implements PermissionServiceImp {
   }
 
   @Override
-  public void deleteRole(long id) {}
+  public PermissionDTO deleteRole(Integer id) {
+      Permission permission=permissionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Permission not found with id: " + id));;
+      permission.setDeletedAt(new Timestamp(System.currentTimeMillis()));
+      permissionRepository.save(permission);
+    return modelMapper.map(permission, PermissionDTO.class);
+  }
 
   @Override
-  public Optional<PermissionDTO> getPermissionById(Integer id) {
-    Optional<Permission> permission = permissionRepository.findById(id);
-    return permission.map(r -> modelMapper.map(r, PermissionDTO.class));
+  public PermissionDTO getPermissionById(Integer id) {
+    Permission permission = permissionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Permission not found with id: " + id));;
+    if(permission.getDeletedAt()!=null){
+      throw new EntityNotFoundException("Permission with id " + id + " has already been deleted.");
+    }
+    return modelMapper.map(permission,PermissionDTO.class);
   }
 }
