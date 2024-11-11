@@ -1,5 +1,6 @@
 package com.digiex.utility.web.controller;
 
+import com.digiex.utility.exception.UsernameAlreadyExistsException;
 import com.digiex.utility.utility.web.model.res.ApiResp;
 import com.digiex.utility.web.model.Role;
 import com.digiex.utility.web.model.User;
@@ -32,9 +33,15 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> CreateUser(@Valid @RequestBody UserDTO userDTO) {
-        UserDTO savedUser = userService.save(userDTO);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedUser.getId()).toUri();
-        return ResponseEntity.created(location).body(ApiResp.builder().success(true).data(savedUser).build());
+        try {
+            UserDTO savedUser = userService.save(userDTO);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(savedUser.getId()).toUri();
+            return ResponseEntity.created(location).body(ApiResp.builder().success(true).data(savedUser).build());
+
+        } catch (UsernameAlreadyExistsException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResp.ErrorResp.builder().message("User exist").build());
+        }
     }
 
     @GetMapping("/{id}")
