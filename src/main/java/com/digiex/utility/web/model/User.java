@@ -16,13 +16,14 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+
 public class User {
   @Id
   @GeneratedValue(generator = "UUID")
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 
-  @Column(name = "username", length = 20, nullable = false)
+  @Column(name = "username", length = 20, nullable = false ,unique = true)
   private String username;
 
   @Column(name = "password", length = 60, nullable = false)

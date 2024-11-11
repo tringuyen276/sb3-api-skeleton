@@ -27,7 +27,7 @@ create TABLE IF NOT EXISTS  role_permissions(
 
 CREATE TABLE IF NOT EXISTS users(
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    username varchar(20),
+    username varchar(20) UNIQUE,
     password text,
     email VARCHAR(255) NOT NULL,
     first_name varchar(50) NOT NULL,

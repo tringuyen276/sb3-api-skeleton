@@ -1,5 +1,6 @@
 package com.digiex.utility.web.service;
 
+import com.digiex.utility.exception.UsernameAlreadyExistsException;
 import com.digiex.utility.util.PasswordUtil;
 import com.digiex.utility.web.model.Role;
 import com.digiex.utility.web.model.User;
@@ -28,6 +29,9 @@ public class UserServiceImp implements UserService {
   @Override
   public UserDTO save(UserDTO userDTO) {
     User user = modelMapper.map(userDTO, User.class);
+    if(userRepository.existsByUsername(user.getUsername())){
+      throw new UsernameAlreadyExistsException("Username đã tồn tại");
+    }
     user.setPassword(PasswordUtil.encode(user.getPassword()));
     User savedUser = userRepository.save(user);
     return modelMapper.map(savedUser, UserDTO.class);
