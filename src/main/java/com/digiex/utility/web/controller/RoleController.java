@@ -31,6 +31,7 @@ public class RoleController {
             .path("/{id}")
             .buildAndExpand(postResponse.getId())
             .toUri();
+
     return ResponseEntity.created(location)
         .body(ApiResp.builder().success(true).data(postResponse).build());
   }
@@ -49,7 +50,7 @@ public class RoleController {
     }
   }
 
-  @PutMapping("{id}")
+  @PutMapping("/{id}")
   public ResponseEntity<?> updateRole(@PathVariable Long id, @RequestBody RoleDTO updatedRoleDTO) {
 
     RoleDTO existingRole = roleService.getRoleById(id);
@@ -62,7 +63,7 @@ public class RoleController {
     }
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteRole(@PathVariable Long id) {
     try {
       roleService.deleteRole(id);
@@ -73,7 +74,7 @@ public class RoleController {
     }
   }
 
-  @PutMapping("{id}/permissions")
+  @PutMapping("/{id}/permissions")
   public ResponseEntity<?> updateRolePermissions(
       @PathVariable Long id, @RequestBody Set<Integer> permissionIds) {
     RoleDTO updatedRole = roleService.updateRolePermissions(id, permissionIds);

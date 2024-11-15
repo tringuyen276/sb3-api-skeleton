@@ -32,40 +32,26 @@ public class RoleServiceImp implements RoleService {
 
     Role savedRole = roleReposity.save(role);
 
-    // if (roleDTO.getPermissions() != null && !roleDTO.getPermissions().isEmpty())
-    // {}
-
-    return roleDTO;
+    return savedRole.convertToDTO();
   }
 
   @Override
   public RoleDTO updateRole(long roleId, RoleDTO updateRole) {
-    /*
-     * Role role = modelMapper.map(updateRole, Role.class);
-     * Role existingRole = roleReposity.findById(roleId).get();
-     *
-     * existingRole.setName(role.getName());
-     * existingRole.setDescription(role.getDescription());
-     * existingRole.setPermissions(role.getPermissions());
-     *
-     *
-     * * retu
-     */
-    return RoleDTO.builder().id(null).build();
+
+    Role role =
+        roleReposity.findById(roleId).orElseThrow(() -> new EntityNotFoundException("role"));
+    role.setName(updateRole.getName());
+    roleReposity.save(role);
+    return role.convertToDTO();
   }
 
   @Override
   public RoleDTO deleteRole(long id) {
-    /*
-     * Role role = roleReposity
-     * .findById(id)
-     * .orElseThrow(() -> new
-     * EntityNotFoundException("Permission not found with id: " + id));
-     * role.setDeletedAt(new Timestamp(System.currentTimeMillis()));
-     * ;
-     * roleReposity.save(role);
-     * return modelMapper.map(role, RoleDTO.class);
-     */
+
+    Role role =
+        roleReposity.findById(id).orElseThrow(() -> new EntityNotFoundException("permission"));
+
+    roleReposity.delete(role);
 
     return RoleDTO.builder().id(null).build();
   }
@@ -74,7 +60,7 @@ public class RoleServiceImp implements RoleService {
   public RoleDTO getRoleById(long id) {
     Role role = roleReposity.findById(id).orElseThrow(() -> new EntityNotFoundException());
 
-    return RoleDTO.builder().id(role.getId()).name(role.getName()).build();
+    return role.convertToDTO();
   }
 
   @Override

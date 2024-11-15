@@ -4,6 +4,7 @@ import com.digiex.utility.web.model.Permission;
 import com.digiex.utility.web.model.dto.PermissionDTO;
 import com.digiex.utility.web.repository.PermissionRepository;
 import com.digiex.utility.web.service.imp.PermissionService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,36 +39,20 @@ public class PermissionServiceImp implements PermissionService {
   }
 
   @Override
-  public PermissionDTO deleteRole(Integer id) {
-    /*
-     * Permission permission =
-     * permissionRepository
-     * .findById(id)
-     * .orElseThrow(() -> new
-     * EntityNotFoundException("Permission not found with id: " + id));
-     * ;
-     * permission.setDeletedAt(new Timestamp(System.currentTimeMillis()));
-     * permissionRepository.save(permission);
-     * return modelMapper.map(permission, PermissionDTO.class);
-     */
-    return PermissionDTO.builder().id(null).build();
+  public void deletePermission(Integer id) {
+    Permission p =
+        permissionRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("permission"));
+    permissionRepository.delete(p);
   }
 
   @Override
   public PermissionDTO getPermissionById(Integer id) {
-    /*
-     * Permission permission =
-     * permissionRepository
-     * .findById(id)
-     * .orElseThrow(() -> new
-     * EntityNotFoundException("Permission not found with id: " + id));
-     * ;
-     * if (permission.getDeletedAt() != null) {
-     * throw new EntityNotFoundException("Permission with id " + id +
-     * " has already been deleted.");
-     * }
-     * return modelMapper.map(permission, PermissionDTO.class);
-     */
-    return PermissionDTO.builder().id(null).build();
+    Permission p =
+        permissionRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("permission"));
+    return p.convertToDTO();
   }
 }

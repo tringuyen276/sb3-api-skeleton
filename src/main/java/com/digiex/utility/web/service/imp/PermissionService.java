@@ -7,7 +7,7 @@ public interface PermissionService {
 
   PermissionDTO updatePermission(Integer id, PermissionDTO permissionDTO);
 
-  PermissionDTO deleteRole(Integer id);
+  void deletePermission(Integer id);
 
   PermissionDTO getPermissionById(Integer id);
 }
