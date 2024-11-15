@@ -29,7 +29,20 @@ public class RoleServiceImp implements RoleService {
   public RoleDTO save(RoleDTO roleDTO) {
     Role role = new Role();
     role.setName(roleDTO.getName());
-
+    if (roleDTO.getPermissions() != null) {
+      Set<RolePermission> rolePermission =
+          roleDTO.getPermissions().stream()
+              .map(
+                  permissionId -> {
+                    Permission permission =
+                        permissionRepository
+                            .findById(permissionId.getId())
+                            .orElseThrow(() -> new EntityNotFoundException("permission"));
+                    return RolePermission.builder().role(role).permission(permission).build();
+                  })
+              .collect(Collectors.toSet());
+      role.setPermissions(rolePermission);
+    }
     Role savedRole = roleReposity.save(role);
 
     return savedRole.convertToDTO();
@@ -84,7 +97,6 @@ public class RoleServiceImp implements RoleService {
 
     role.setPermissions(rolePermission);
 
-    roleReposity.save(role);
     return role.convertToDTO();
   }
 }
