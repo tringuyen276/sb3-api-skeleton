@@ -1,75 +1,119 @@
 package com.digiex.utility.web.service;
 
-import com.digiex.utility.exception.UsernameAlreadyExistsException;
 import com.digiex.utility.util.PasswordUtil;
 import com.digiex.utility.web.model.Role;
 import com.digiex.utility.web.model.User;
+import com.digiex.utility.web.model.UserRole;
 import com.digiex.utility.web.model.dto.RoleDTO;
 import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.repository.RoleReposity;
 import com.digiex.utility.web.repository.UserRepository;
 import com.digiex.utility.web.service.imp.UserService;
-
-import java.sql.Timestamp;
-import java.util.Optional;
-import java.util.UUID;
-
 import jakarta.persistence.EntityNotFoundException;
-import org.modelmapper.ModelMapper;
+import jakarta.transaction.Transactional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImp implements UserService {
 
-  @Autowired private RoleReposity roleReposity;
-  @Autowired private ModelMapper modelMapper;
   @Autowired private UserRepository userRepository;
 
+  @Autowired private RoleReposity roleReposity;
+
   @Override
-  public UserDTO save(UserDTO userDTO) {
-    User user = modelMapper.map(userDTO, User.class);
-    if(userRepository.existsByUsername(user.getUsername())){
-      throw new UsernameAlreadyExistsException("Username đã tồn tại");
+  public UserDTO updateUser(UUID id, UserDTO userDTO) {
+
+    User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("user"));
+    user.setFirstName(userDTO.getFirstName());
+    user.setLastName(userDTO.getLastName());
+    user.setEmail(userDTO.getEmail());
+    user.setUsername(userDTO.getUsername());
+    if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
+      user.setPassword(PasswordUtil.encode(userDTO.getPassword()));
     }
-    user.setPassword(PasswordUtil.encode(user.getPassword()));
-    User savedUser = userRepository.save(user);
-    return modelMapper.map(savedUser, UserDTO.class);
+    userRepository.save(user);
+    return UserDTO.builder().id(user.getId()).build();
   }
 
   @Override
   public UserDTO getUserById(UUID id) {
-    User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-    if(user.getDeletedAt()!=null){
-      throw new EntityNotFoundException("User with id " + id + " has already been deleted.");
-    };
-    return modelMapper.map(user, UserDTO.class);
+    User user =
+        userRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+    Set<RoleDTO> roles =
+        user.getRoles().stream()
+            .map(
+                userRole -> {
+                  Role role = userRole.getRole();
+                  return RoleDTO.builder().id(role.getId()).name(role.getName()).build();
+                })
+            .collect(Collectors.toSet());
+
+    return UserDTO.builder()
+        .id(user.getId())
+        .firstName(user.getFirstName())
+        .lastName(user.getLastName())
+        .email(user.getEmail())
+        .username(user.getUsername())
+        .roles(roles)
+        .build();
   }
 
   @Override
-  public UserDTO updateUser(UUID userId, UserDTO updateUser) {
-    User user=modelMapper.map(updateUser,User.class);
-    User existingUser = userRepository.findById(userId).get();
+  @Transactional
+  public UserDTO save(UserDTO userDTO) {
+    User user =
+        User.builder()
+            .firstName(userDTO.getFirstName())
+            .lastName(userDTO.getLastName())
+            .email(userDTO.getEmail())
+            .username(userDTO.getUsername())
+            .password(PasswordUtil.encode(userDTO.getPassword()))
+            .build();
+    if (userRepository.existsByUsername(user.getUsername())) {
+      throw new DataIntegrityViolationException("username");
+    }
+    userRepository.save(user);
 
-    existingUser.setFirstName(user.getFirstName());
-    existingUser.setLastName(user.getLastName());
-    existingUser.setEmail(user.getEmail());
-    existingUser.setUsername(user.getUsername());
-    existingUser.setRoles(user.getRoles());
-    User savedUser = userRepository.save(existingUser);
-    return modelMapper.map(savedUser, UserDTO.class);
+    if (userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()) {
+      Set<UserRole> userRoles =
+          userDTO.getRoles().stream()
+              .map(
+                  roleDTO -> {
+                    Role role =
+                        roleReposity
+                            .findById(roleDTO.getId())
+                            .orElseThrow(() -> new EntityNotFoundException("Role"));
+                    return UserRole.builder().user(user).role(role).build();
+                  })
+              .collect(Collectors.toSet());
+      userRoles.forEach(item -> System.out.println(item.getRole().getName()));
+      user.setRoles(userRoles);
+
+      Set<RoleDTO> roles =
+          user.getRoles().stream()
+              .map(
+                  userRole -> {
+                    Role role = userRole.getRole();
+                    return RoleDTO.builder().id(role.getId()).name(role.getName()).build();
+                  })
+              .collect(Collectors.toSet());
+      userDTO.setRoles(roles);
+    }
+
+    userDTO.setId(user.getId());
+    return userDTO;
   }
 
   public User findUserByUsername(String username) {
     return userRepository.findByUsername(username);
-  }
-
-  @Override
-  public UserDTO deleteUser(UUID id) {
-    User user=userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Permission not found with id: " + id));
-    user.setDeletedAt(new Timestamp(System.currentTimeMillis()));;
-    userRepository.save(user);
-    return modelMapper.map(user, UserDTO.class);
   }
 
   public boolean validUser(String username, String password) {

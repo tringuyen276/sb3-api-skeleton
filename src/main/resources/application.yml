@@ -1,5 +1,4 @@
 spring:
-
   application:
     name: sb3-api-skeleton
   jpa:
@@ -13,11 +12,10 @@ spring:
   mvc:
     log-resolved-exception: false
 
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres1
+    url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
-    password: password
+    password: postgres
     driver-class-name: org.postgresql.Driver
     initialization-mode: always
 jwt:

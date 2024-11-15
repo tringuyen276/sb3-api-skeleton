@@ -1,9 +1,8 @@
 package com.digiex.utility.web.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.digiex.utility.web.model.dto.PermissionDTO;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,9 +19,6 @@ public class Permission {
   @Column(name = "name", length = 50, nullable = false)
   private String name;
 
-  @Column(name = "description", length = 255, nullable = false)
-  private String description;
-
   @Column(name = "created_at", nullable = false, updatable = false)
   private Timestamp createdAt;
 
@@ -32,7 +28,10 @@ public class Permission {
   @Column(name = "deleted_at")
   private Timestamp deletedAt;
 
-  @ManyToMany(mappedBy = "permissions", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JsonIgnore
-  private Set<Role> roles = new HashSet<>();
+  @OneToMany(mappedBy = "permission")
+  private Set<RolePermission> roles;
+
+  public PermissionDTO convertToDTO() {
+    return PermissionDTO.builder().id(this.id).name(this.name).createAt(this.createdAt).build();
+  }
 }

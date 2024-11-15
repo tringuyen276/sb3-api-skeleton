@@ -2,7 +2,6 @@ package com.digiex.utility.config;
 
 import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.service.UserServiceImp;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.UUID;
 import lombok.*;
 
 @Entity
@@ -16,14 +15,13 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-
 public class User {
   @Id
   @GeneratedValue(generator = "UUID")
   @Column(name = "id", updatable = false, nullable = false)
   private UUID id;
 
-  @Column(name = "username", length = 20, nullable = false ,unique = true)
+  @Column(name = "username", length = 20, nullable = false, unique = true)
   private String username;
 
   @Column(name = "password", length = 60, nullable = false)
@@ -49,10 +47,19 @@ public class User {
   @JsonIgnore
   private Timestamp deletedAt;
 
-  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinTable(
-      name = "user_roles",
-      joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Role> roles = new HashSet<>();
+  @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+  private Set<UserRole> roles;
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return Objects.equals(id, user.id);
+  }
 }

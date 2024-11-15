@@ -1,10 +1,11 @@
 package com.digiex.utility.web.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.digiex.utility.web.model.dto.PermissionDTO;
+import com.digiex.utility.web.model.dto.RoleDTO;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.*;
 
 @Entity
@@ -16,33 +17,31 @@ import lombok.*;
 public class Role {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", updatable = false, nullable = false)
-  private Long id; // Change from Integer to UUID
+  private Long id;
 
   @Column(length = 20, unique = true, nullable = false)
   private String name;
 
-  @Column(length = 255, nullable = false)
-  private String description;
+  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+  private Set<UserRole> users;
 
-  @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JsonIgnore
-  private Set<User> users = new HashSet<>();
-
-  @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinTable(
-      name = "role_permissions",
-      joinColumns = @JoinColumn(name = "role_id"),
-      inverseJoinColumns = @JoinColumn(name = "permission_id"))
-  private Set<Permission> permissions = new HashSet<>();
-
-  @Column(name = "created_at")
-  private Timestamp createdAt;
+  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+  private Set<RolePermission> permissions;
 
   @Column(name = "updated_at")
   private Timestamp updatedAt;
 
   @Column(name = "deleted_at")
   private Timestamp deletedAt;
+
+  public RoleDTO convertToDTO() {
+    Set<PermissionDTO> permissionDTOs =
+        this.permissions.stream()
+            .map(rolePermission -> rolePermission.getPermission().convertToDTO())
+            .collect(Collectors.toSet());
+
+    return RoleDTO.builder().id(this.id).name(this.name).permissions(permissionDTOs).build();
+  }
 }

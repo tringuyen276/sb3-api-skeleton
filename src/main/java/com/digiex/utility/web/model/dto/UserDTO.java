@@ -1,11 +1,13 @@
 package com.digiex.utility.web.model.dto;
 
-import com.digiex.utility.web.model.Role;
+import com.digiex.utility.web.model.User;
+import com.digiex.utility.web.model.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,27 +22,54 @@ import lombok.Setter;
 public class UserDTO {
   private UUID id;
 
-  @NotBlank(message = "First name is required")
+  @NotBlank(message = "user.firstname.not_blank")
+  @JsonProperty("first_name")
   private String firstName;
 
-  @NotBlank(message = "Last name is required")
+  @NotBlank(message = "user.lastname.not_blank")
+  @JsonProperty("last_name")
   private String lastName;
 
-  @NotBlank(message = "Username is required")
-
+  @NotBlank(message = "user.username.not_blank")
   private String username;
 
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-  @NotBlank(message = "Password is required")
+  @NotBlank(message = "user.password.not_blank")
   @Size(min = 8, message = "Password must be at least 8 characters")
   private String password;
 
-  @NotBlank(message = "Email is required")
-  @Email(message = "Email is invalid")
+  @NotBlank(message = "user.email.not_blank")
+  @Email(message = "user.email.invalid")
   private String email;
 
   private Timestamp createdAt;
   private Timestamp updatedAt;
 
   private Set<RoleDTO> roles;
+
+  public User convertToEntity() {
+    User user = new User();
+    user.setId(this.id);
+    user.setFirstName(this.firstName);
+    user.setLastName(this.lastName);
+    user.setUsername(this.username);
+    user.setPassword(this.password);
+    user.setEmail(this.email);
+    user.setCreatedAt(this.createdAt);
+    user.setUpdatedAt(this.updatedAt);
+    if (this.roles != null && !this.roles.isEmpty()) {
+      Set<UserRole> userRoles =
+          this.roles.stream()
+              .map(
+                  role -> {
+                    UserRole userRole = new UserRole();
+                    userRole.setUser(user);
+                    userRole.setRole(role.convertToEntity());
+                    return userRole;
+                  })
+              .collect(Collectors.toSet());
+      user.setRoles(userRoles);
+    }
+    return user;
+  }
 }

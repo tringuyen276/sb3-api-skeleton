@@ -3,12 +3,8 @@ package com.digiex.utility.web.controller;
 import com.digiex.utility.utility.web.model.res.ApiResp;
 import com.digiex.utility.web.model.dto.PermissionDTO;
 import com.digiex.utility.web.service.imp.PermissionService;
-import java.net.URI;
-import java.util.Optional;
-
 import jakarta.persistence.EntityNotFoundException;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.net.URI;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/permission")
 public class PermissionController {
 
-  @Autowired private ModelMapper modelMapper;
+  // @Autowired private ModelMapper modelMapper;
 
   PermissionService permissionService;
 
@@ -35,7 +31,7 @@ public class PermissionController {
             .buildAndExpand(savedPermission.getId())
             .toUri();
     return ResponseEntity.created(location)
-            .body(ApiResp.builder().success(true).data(savedPermission).build());
+        .body(ApiResp.builder().success(true).data(savedPermission).build());
   }
 
   @GetMapping("/{id}")
@@ -45,33 +41,34 @@ public class PermissionController {
       PermissionDTO permission = permissionService.getPermissionById(id);
 
       return ResponseEntity.ok().body(ApiResp.builder().success(true).data(permission).build());
-    } catch (
-            EntityNotFoundException ex) {
+    } catch (EntityNotFoundException ex) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
-              .body(ApiResp.ErrorResp.builder().message("Permission not found").build());
+          .body(ApiResp.ErrorResp.builder().message("Permission not found").build());
     } catch (Exception ex) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-              .body(ApiResp.ErrorResp.builder().message("Internal server error").build());
+          .body(ApiResp.ErrorResp.builder().message("Internal server error").build());
     }
   }
+
   @PutMapping("/{id}")
   public ResponseEntity<?> updateRole(
       @PathVariable int id, @RequestBody PermissionDTO updatedPermissionDTO) {
     PermissionDTO existingPermission = permissionService.getPermissionById(id);
-    if (existingPermission!=null) {
+    if (existingPermission != null) {
       PermissionDTO updatedPermission =
           permissionService.updatePermission(id, updatedPermissionDTO);
-      return ResponseEntity.ok().body(ApiResp.builder().success(true).data(updatedPermission).build());
+      return ResponseEntity.ok()
+          .body(ApiResp.builder().success(true).data(updatedPermission).build());
     } else {
       return ResponseEntity.status(HttpStatus.NOT_FOUND)
-              .body(ApiResp.ErrorResp.builder().message("Permission not found").build());
+          .body(ApiResp.ErrorResp.builder().message("Permission not found").build());
     }
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<String> deleteRole(@PathVariable int id) {
     try {
-                  permissionService.deleteRole(id);
+      permissionService.deleteRole(id);
       return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     } catch (Exception e) {
       return new ResponseEntity<>(
