@@ -8,6 +8,7 @@ import com.digiex.utility.web.service.imp.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.Set;
 import java.util.UUID;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -79,6 +80,27 @@ public class UserController {
     try {
       UUID userId = UUID.fromString(id);
       UserDTO updatedUser = userService.updateUser(userId, updatedUserDTO);
+      return ResponseEntity.ok().body(ApiResp.builder().success(true).data(updatedUser).build());
+    } catch (IllegalArgumentException ex) {
+      var messageError =
+          messageSource.getMessage("error.invalid.uuid", null, LocaleContextHolder.getLocale());
+      var error =
+          ApiResp.ErrorResp.builder()
+              .code(ApplicationErrorCode.NOT_FOUND_HTTP_REQUEST_RESOURCE)
+              .message(messageError)
+              .build();
+
+      var response = ApiResp.builder().error(error).build();
+
+      return ResponseEntity.badRequest().body(response);
+    }
+  }
+
+  @PutMapping("/{id}/roles")
+  public ResponseEntity<?> updateUserRole(@PathVariable String id, @RequestBody Set<Long> roleIds) {
+    try {
+      UUID userId = UUID.fromString(id);
+      UserDTO updatedUser = userService.updateUserRole(userId, roleIds);
       return ResponseEntity.ok().body(ApiResp.builder().success(true).data(updatedUser).build());
     } catch (IllegalArgumentException ex) {
       var messageError =

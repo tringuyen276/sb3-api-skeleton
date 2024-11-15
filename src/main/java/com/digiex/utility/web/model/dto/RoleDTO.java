@@ -20,7 +20,7 @@ import lombok.Setter;
 public class RoleDTO {
   private Long id;
 
-  @NotBlank(message = "Role name is required")
+  @NotBlank(message = "role.name.not_blank")
   private String name;
 
   private Set<PermissionDTO> permissions;

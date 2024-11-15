@@ -25,17 +25,13 @@ public class PermissionServiceImp implements PermissionService {
 
   @Override
   public PermissionDTO updatePermission(Integer id, PermissionDTO updatePermission) {
-    /*
-     * Permission existingPermission =
-     * permissionRepository
-     * .findById(id)
-     * .orElseThrow(() -> new IllegalArgumentException("Role not found with id: " +
-     * id));
-     * existingPermission.setName(updatePermission.getName());
-     * Permission savedPermission = permissionRepository.save(existingPermission);
-     * return modelMapper.map(savedPermission, PermissionDTO.class);
-     */
-    return PermissionDTO.builder().id(null).build();
+    Permission p =
+        permissionRepository
+            .findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("permission"));
+    p.setName(updatePermission.getName());
+    permissionRepository.save(p);
+    return p.convertToDTO();
   }
 
   @Override

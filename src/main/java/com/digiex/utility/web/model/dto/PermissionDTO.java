@@ -17,7 +17,7 @@ import lombok.Setter;
 public class PermissionDTO {
   private Integer id;
 
-  @NotBlank(message = "Name permission is required")
+  @NotBlank(message = "permission.name.not_blank")
   private String name;
 
   private Timestamp createAt;

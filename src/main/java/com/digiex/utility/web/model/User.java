@@ -1,10 +1,13 @@
 package com.digiex.utility.web.model;
 
+import com.digiex.utility.web.model.dto.RoleDTO;
+import com.digiex.utility.web.model.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 import lombok.*;
 
 @Entity
@@ -61,5 +64,23 @@ public class User {
     if (o == null || getClass() != o.getClass()) return false;
     User user = (User) o;
     return Objects.equals(id, user.id);
+  }
+
+  public UserDTO convertToDTO() {
+    Set<RoleDTO> roleDTOs =
+        this.roles.stream()
+            .map(userRole -> userRole.getRole().convertToDTO())
+            .collect(Collectors.toSet());
+
+    return UserDTO.builder()
+        .id(this.id)
+        .username(this.username)
+        .email(this.email)
+        .firstName(this.firstName)
+        .lastName(this.lastName)
+        .createdAt(this.createdAt)
+        .updatedAt(this.updatedAt)
+        .roles(roleDTOs)
+        .build();
   }
 }

@@ -8,6 +8,7 @@ import com.digiex.utility.web.model.dto.RoleDTO;
 import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.repository.RoleReposity;
 import com.digiex.utility.web.repository.UserRepository;
+import com.digiex.utility.web.repository.UserRoleRepository;
 import com.digiex.utility.web.service.imp.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -24,6 +25,8 @@ public class UserServiceImp implements UserService {
   @Autowired private UserRepository userRepository;
 
   @Autowired private RoleReposity roleReposity;
+
+  @Autowired private UserRoleRepository userRoleRepository;
 
   @Override
   public UserDTO updateUser(UUID id, UserDTO userDTO) {
@@ -122,5 +125,29 @@ public class UserServiceImp implements UserService {
       return false;
     }
     return PasswordUtil.comapareHash(password, user.getPassword());
+  }
+
+  @Override
+  @Transactional
+  public UserDTO updateUserRole(UUID id, Set<Long> roleIds) {
+    User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("user"));
+    Set<UserRole> userRoles = user.getRoles();
+    userRoleRepository.deleteAllInBatch(userRoles);
+
+    Set<UserRole> newUserRoles =
+        roleIds.stream()
+            .map(
+                roleId -> {
+                  Role role =
+                      roleReposity
+                          .findById(roleId)
+                          .orElseThrow(() -> new EntityNotFoundException("role"));
+                  return UserRole.builder().user(user).role(role).build();
+                })
+            .collect(Collectors.toSet());
+    user.setRoles(newUserRoles);
+
+    userRepository.save(user);
+    return user.convertToDTO();
   }
 }
