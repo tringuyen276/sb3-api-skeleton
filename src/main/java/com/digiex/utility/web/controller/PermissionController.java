@@ -4,6 +4,8 @@ import com.digiex.utility.utility.web.model.res.ApiResp;
 import com.digiex.utility.web.model.dto.PermissionDTO;
 import com.digiex.utility.web.service.imp.PermissionService;
 import java.net.URI;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -13,9 +15,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class PermissionController {
 
   PermissionService permissionService;
+  private final ResourceBundleMessageSource messageSource;
 
-  public PermissionController(PermissionService permissionService) {
+  public PermissionController(
+      PermissionService permissionService, ResourceBundleMessageSource messageSource) {
     this.permissionService = permissionService;
+    this.messageSource = messageSource;
   }
 
   @PostMapping
@@ -39,7 +44,7 @@ public class PermissionController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<?> updateRole(
+  public ResponseEntity<?> updatePermission(
       @PathVariable int id, @RequestBody PermissionDTO updatedPermissionDTO) {
     PermissionDTO updatedPermission = permissionService.updatePermission(id, updatedPermissionDTO);
     return ResponseEntity.ok()
@@ -47,8 +52,10 @@ public class PermissionController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteRole(@PathVariable int id) {
+  public ResponseEntity<?> deletePermission(@PathVariable int id) {
     permissionService.deletePermission(id);
-    return ResponseEntity.ok().body("Permission deleted successfully");
+    String messageString =
+        messageSource.getMessage("success.delete", null, LocaleContextHolder.getLocale());
+    return ResponseEntity.ok().body(ApiResp.builder().success(true).data(messageString).build());
   }
 }

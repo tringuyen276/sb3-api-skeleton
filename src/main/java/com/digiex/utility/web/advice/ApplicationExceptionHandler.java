@@ -60,7 +60,7 @@ public class ApplicationExceptionHandler extends ExceptionHandlerAdvice {
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<?> handle(HttpServletRequest request, DataIntegrityViolationException e) {
+  public ResponseEntity<?> handle(HttpServletRequest request, ConstraintViolationException e) {
     return error(ApplicationErrorCode.CONFLICT_RESOURCE_ERROR, e.getMessage());
   }
 }
