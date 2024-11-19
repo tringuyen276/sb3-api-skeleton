@@ -1,7 +1,6 @@
-package com.digiex.utility.web.service.imp;
+package com.digiex.utility.service.imp;
 
 import com.digiex.utility.web.model.dto.UserDTO;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface UserService {

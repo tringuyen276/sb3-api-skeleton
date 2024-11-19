@@ -1,21 +1,17 @@
-package com.digiex.utility.web.model.dto;
+package com.digiex.utility.web.model.req;
 
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.jackson.Jacksonized;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Setter
+@ToString
 @Builder
-public class RoleDTO {
-  private Long id;
-
+@Jacksonized
+public class CreateRoleReq {
   @NotNull(message = "Role is required")
   private String name;
 

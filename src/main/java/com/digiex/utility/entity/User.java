@@ -1,9 +1,6 @@
-package com.digiex.utility.web.model;
+package com.digiex.utility.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.UUID;
 import lombok.*;
@@ -16,7 +13,6 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-
 public class User {
   @Id
   @GeneratedValue(generator = "UUID")
@@ -25,6 +21,10 @@ public class User {
   @Column(unique = true, nullable = false)
   private String username;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+  @OneToMany(
+      mappedBy = "user",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER)
   private Set<UserRole> userRoles = new HashSet<>();
 }

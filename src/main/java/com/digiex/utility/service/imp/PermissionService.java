@@ -1,7 +1,6 @@
-package com.digiex.utility.web.service.imp;
+package com.digiex.utility.service.imp;
 
 import com.digiex.utility.web.model.dto.PermissionDTO;
-import java.util.Optional;
 
 public interface PermissionService {
   PermissionDTO save(PermissionDTO permissionDTO);

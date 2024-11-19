@@ -5,7 +5,6 @@ import com.digiex.utility.utility.web.advice.ExceptionHandlerAdvice;
 import com.digiex.utility.utility.web.model.res.ApiResp;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,13 +58,12 @@ public class ApplicationExceptionHandler extends ExceptionHandlerAdvice {
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ApiResp.ErrorResp.builder().message(ex.getMessage()).build());
+        .body(ApiResp.ErrorResp.builder().message(ex.getMessage()).build());
   }
 
   @ExceptionHandler(value = DuplicateKeyException.class)
-  public ResponseEntity<?> handleDuplicateKey(HttpServletRequest request, DuplicateKeyException ex) {
+  public ResponseEntity<?> handleDuplicateKey(
+      HttpServletRequest request, DuplicateKeyException ex) {
     return error(ApplicationErrorCode.CONFLICT_RESOURCE_ERROR, ex.getMessage());
   }
-
-
 }

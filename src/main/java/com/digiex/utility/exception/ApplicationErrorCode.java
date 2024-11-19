@@ -14,7 +14,6 @@ public enum ApplicationErrorCode implements ErrorCode {
   NOT_FOUND_HTTP_REQUEST_RESOURCE("E_100_404_001", 404),
   CONFLICT_RESOURCE_ERROR("E_100_409_001", 409);
 
-
   private String systemCode;
 
   private Integer httpStatusCode;

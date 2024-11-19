@@ -1,34 +1,34 @@
-package com.digiex.utility.web.service;
+package com.digiex.utility.service;
 
-import com.digiex.utility.web.model.Permission;
+import com.digiex.utility.entity.Permission;
+import com.digiex.utility.repository.PermissionRepository;
+import com.digiex.utility.service.imp.PermissionService;
 import com.digiex.utility.web.model.dto.PermissionDTO;
-import com.digiex.utility.web.repository.PermissionRepository;
-import java.sql.Timestamp;
-import java.util.Optional;
-
 import jakarta.persistence.EntityNotFoundException;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.digiex.utility.web.service.imp.PermissionService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class PermissionServiceImp implements PermissionService {
   @Autowired private PermissionRepository permissionRepository;
 
-
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public PermissionDTO save(PermissionDTO permissionDTO) {
-    Permission permission = permissionDTO.convertToEntity();
+    Permission permission = new Permission();
+    permission.setName(permissionDTO.getName());
+
     return PermissionDTO.convertToDto(permissionRepository.save(permission));
   }
 
-
-
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public PermissionDTO updatePermission(Long id, PermissionDTO permissionDTO) {
-    Permission existingPermission = permissionRepository.findById(id)
+    Permission existingPermission =
+        permissionRepository
+            .findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Permission not found"));
     existingPermission.setName(permissionDTO.getName());
     return PermissionDTO.convertToDto(permissionRepository.save(existingPermission));
@@ -41,7 +41,9 @@ public class PermissionServiceImp implements PermissionService {
 
   @Override
   public PermissionDTO getPermissionById(Long id) {
-    Permission permission = permissionRepository.findById(id)
+    Permission permission =
+        permissionRepository
+            .findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Permission not found"));
     return PermissionDTO.convertToDto(permission);
   }

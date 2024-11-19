@@ -1,11 +1,10 @@
 package com.digiex.utility.web.controller;
 
+import com.digiex.utility.service.imp.PermissionService;
 import com.digiex.utility.utility.web.model.res.ApiResp;
 import com.digiex.utility.web.model.dto.PermissionDTO;
-import com.digiex.utility.web.service.imp.PermissionService;
-import java.net.URI;
-
 import jakarta.validation.Valid;
+import java.net.URI;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,12 +23,12 @@ public class PermissionController {
   public ResponseEntity<Object> CreateRepository(@RequestBody @Valid PermissionDTO permissionDTO) {
     PermissionDTO savedPermission = permissionService.save(permissionDTO);
     URI location =
-            ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(savedPermission.getId())
-                    .toUri();
+        ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(savedPermission.getId())
+            .toUri();
     return ResponseEntity.created(location)
-            .body(ApiResp.builder().success(true).data(savedPermission).build());
+        .body(ApiResp.builder().success(true).data(savedPermission).build());
   }
 
   @GetMapping("/{id}")
@@ -40,9 +39,10 @@ public class PermissionController {
 
   @PutMapping("/{id}")
   public ResponseEntity<?> updateRole(
-      @PathVariable long id, @RequestBody @Valid  PermissionDTO updatedPermissionDTO) {
+      @PathVariable long id, @RequestBody @Valid PermissionDTO updatedPermissionDTO) {
     PermissionDTO updatedPermission = permissionService.updatePermission(id, updatedPermissionDTO);
-    return ResponseEntity.ok().body(ApiResp.builder().success(true).data(updatedPermission).build());
+    return ResponseEntity.ok()
+        .body(ApiResp.builder().success(true).data(updatedPermission).build());
   }
 
   @DeleteMapping("/{id}")
