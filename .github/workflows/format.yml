@@ -1,7 +1,7 @@
 name: Format
 
 on:
-  push:
+  commit:
     branches:
       - "**" # Run on all branches
 
