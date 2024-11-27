@@ -2,53 +2,46 @@ package com.digiex.utility.config;
 
 import jakarta.annotation.PostConstruct;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
+import javax.sql.DataSource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class initiateData {
+  @Autowired private DataSource dataSource;
 
   @PostConstruct
   public void init() {
-    String url = "jdbc:postgresql://localhost:5432/postgres";
-    String user = "postgres";
-    String password = "postgres";
-    String filePath = "src/main/resources/schema.sql";
-
-    try (Connection connection = DriverManager.getConnection(url, user, password)) {
-      runSqlScript(connection, filePath);
+    try (Connection connection = dataSource.getConnection()) {
+      runSqlScript(connection, "schema.sql");
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("Error while executing script: {}", e.getMessage());
     }
   }
 
-  private void runSqlScript(Connection connection, String scriptLocation) throws IOException {
-    // Đọc file SQL
-    try (BufferedReader br = new BufferedReader(new FileReader(scriptLocation))) {
+  private void runSqlScript(Connection connection, String scriptLocation) throws Exception {
+    var schemaFile = new ClassPathResource("schema.sql");
+    try (var inputStream = schemaFile.getInputStream()) {
+      var br = new BufferedReader(new InputStreamReader(inputStream));
       StringBuilder script = new StringBuilder();
       String line;
       while ((line = br.readLine()) != null) {
         script.append(line).append("\n");
       }
 
-      // Thực thi câu lệnh SQL
       String sql = script.toString();
       if (!sql.isEmpty()) {
         try (Statement statement = connection.createStatement()) {
           statement.execute(sql);
-          System.out.println("Script executed successfully: " + scriptLocation);
+          log.info("Script executed successfully: {}", schemaFile.getPath());
         }
       }
-    } catch (IOException e) {
-      System.out.println("Error executing SQL script: " + scriptLocation);
-      throw e;
-    } catch (Exception e) {
-      System.out.println("Error while executing SQL statements.");
-      e.printStackTrace();
     }
   }
 }

@@ -1,8 +1,8 @@
 package com.digiex.utility.web.service;
 
-import com.digiex.utility.web.model.Permission;
-import com.digiex.utility.web.model.Role;
-import com.digiex.utility.web.model.RolePermission;
+import com.digiex.utility.entity.Permission;
+import com.digiex.utility.entity.Role;
+import com.digiex.utility.entity.RolePermission;
 import com.digiex.utility.web.model.dto.RoleDTO;
 import com.digiex.utility.web.repository.PermissionRepository;
 import com.digiex.utility.web.repository.RolePermissionRepository;
@@ -55,6 +55,7 @@ public class RoleServiceImp implements RoleService {
         roleReposity.findById(roleId).orElseThrow(() -> new EntityNotFoundException("role"));
     role.setName(updateRole.getName());
     roleReposity.save(role);
+
     return role.convertToDTO();
   }
 

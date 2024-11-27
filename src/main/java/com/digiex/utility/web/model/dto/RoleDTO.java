@@ -1,8 +1,8 @@
 package com.digiex.utility.web.model.dto;
 
-import com.digiex.utility.web.model.Permission;
-import com.digiex.utility.web.model.Role;
-import com.digiex.utility.web.model.RolePermission;
+import com.digiex.utility.entity.Permission;
+import com.digiex.utility.entity.Role;
+import com.digiex.utility.entity.RolePermission;
 import jakarta.validation.constraints.NotBlank;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,6 +25,8 @@ public class RoleDTO {
 
   private Set<PermissionDTO> permissions;
 
+  private Set<UserDTO> users;
+
   public Role convertToEntity() {
     Role role = new Role();
     role.setId(this.id);
@@ -41,5 +43,14 @@ public class RoleDTO {
       role.setPermissions(rolePermissions);
     }
     return role;
+  }
+
+  public RoleDTO convertToDTO(Role role) {
+    Set<PermissionDTO> permissionDTOs =
+        role.getPermissions().stream()
+            .map(rolePermission -> rolePermission.getPermission().convertToDTO())
+            .collect(Collectors.toSet());
+
+    return RoleDTO.builder().id(this.id).name(this.name).permissions(permissionDTOs).build();
   }
 }

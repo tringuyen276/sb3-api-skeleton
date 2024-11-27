@@ -1,4 +1,4 @@
-package com.digiex.utility.web.model;
+package com.digiex.utility.entity;
 
 import com.digiex.utility.web.model.dto.PermissionDTO;
 import com.digiex.utility.web.model.dto.RoleDTO;
@@ -24,10 +24,10 @@ public class Role {
   @Column(length = 20, unique = true, nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<UserRole> users;
 
-  @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "role", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private Set<RolePermission> permissions;
 
   @Column(name = "updated_at")
@@ -37,6 +37,7 @@ public class Role {
   private Timestamp deletedAt;
 
   public RoleDTO convertToDTO() {
+
     Set<PermissionDTO> permissionDTOs =
         this.permissions.stream()
             .map(rolePermission -> rolePermission.getPermission().convertToDTO())

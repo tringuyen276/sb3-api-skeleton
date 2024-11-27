@@ -1,4 +1,4 @@
-package com.digiex.utility.web.model;
+package com.digiex.utility.entity;
 
 import com.digiex.utility.web.model.dto.PermissionDTO;
 import jakarta.persistence.*;

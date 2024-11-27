@@ -1,6 +1,6 @@
 package com.digiex.utility.web.service;
 
-import com.digiex.utility.web.model.Permission;
+import com.digiex.utility.entity.Permission;
 import com.digiex.utility.web.model.dto.PermissionDTO;
 import com.digiex.utility.web.repository.PermissionRepository;
 import com.digiex.utility.web.service.imp.PermissionService;

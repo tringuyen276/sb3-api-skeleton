@@ -1,9 +1,9 @@
 package com.digiex.utility.web.service;
 
+import com.digiex.utility.entity.Role;
+import com.digiex.utility.entity.User;
+import com.digiex.utility.entity.UserRole;
 import com.digiex.utility.util.PasswordUtil;
-import com.digiex.utility.web.model.Role;
-import com.digiex.utility.web.model.User;
-import com.digiex.utility.web.model.UserRole;
 import com.digiex.utility.web.model.dto.RoleDTO;
 import com.digiex.utility.web.model.dto.UserDTO;
 import com.digiex.utility.web.repository.RoleReposity;
@@ -29,6 +29,7 @@ public class UserServiceImp implements UserService {
   @Autowired private UserRoleRepository userRoleRepository;
 
   @Override
+  @Transactional(rollbackOn = Exception.class)
   public UserDTO updateUser(UUID id, UserDTO userDTO) {
 
     User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("user"));
@@ -59,18 +60,11 @@ public class UserServiceImp implements UserService {
                 })
             .collect(Collectors.toSet());
 
-    return UserDTO.builder()
-        .id(user.getId())
-        .firstName(user.getFirstName())
-        .lastName(user.getLastName())
-        .email(user.getEmail())
-        .username(user.getUsername())
-        .roles(roles)
-        .build();
+    return user.convertToDTO();
   }
 
   @Override
-  @Transactional
+  @Transactional(rollbackOn = Exception.class)
   public UserDTO save(UserDTO userDTO) {
     User user =
         User.builder()
@@ -128,7 +122,7 @@ public class UserServiceImp implements UserService {
   }
 
   @Override
-  @Transactional
+  @Transactional(rollbackOn = Exception.class)
   public UserDTO updateUserRole(UUID id, Set<Long> roleIds) {
     User user = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("user"));
     Set<UserRole> userRoles = user.getRoles();

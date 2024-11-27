@@ -1,7 +1,7 @@
 package com.digiex.utility.web.model.dto;
 
-import com.digiex.utility.web.model.User;
-import com.digiex.utility.web.model.UserRole;
+import com.digiex.utility.entity.User;
+import com.digiex.utility.entity.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import java.sql.Timestamp;
@@ -71,5 +71,23 @@ public class UserDTO {
       user.setRoles(userRoles);
     }
     return user;
+  }
+
+  public UserDTO convertToDTO(User user) {
+    Set<RoleDTO> roleDTOs =
+        user.getRoles().stream()
+            .map(userRole -> userRole.getRole().convertToDTO())
+            .collect(Collectors.toSet());
+
+    return UserDTO.builder()
+        .id(user.getId())
+        .username(user.getUsername())
+        .email(user.getEmail())
+        .firstName(user.getFirstName())
+        .lastName(user.getLastName())
+        .createdAt(user.getCreatedAt())
+        .updatedAt(user.getUpdatedAt())
+        .roles(roleDTOs)
+        .build();
   }
 }

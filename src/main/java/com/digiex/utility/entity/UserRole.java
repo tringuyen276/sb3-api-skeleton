@@ -1,4 +1,4 @@
-package com.digiex.utility.web.model;
+package com.digiex.utility.entity;
 
 import jakarta.persistence.*;
 import java.util.Objects;

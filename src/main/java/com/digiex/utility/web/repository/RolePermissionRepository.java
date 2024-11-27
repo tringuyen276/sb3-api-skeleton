@@ -1,6 +1,6 @@
 package com.digiex.utility.web.repository;
 
-import com.digiex.utility.web.model.RolePermission;
+import com.digiex.utility.entity.RolePermission;
 import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

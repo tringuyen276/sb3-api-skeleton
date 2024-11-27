@@ -1,6 +1,6 @@
 package com.digiex.utility.web.service;
 
-import com.digiex.utility.web.model.User;
+import com.digiex.utility.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -97,9 +97,10 @@ public class UserController {
   }
 
   @PutMapping("/{id}/roles")
-  public ResponseEntity<?> updateUserRole(@PathVariable String id, @RequestBody Set<Long> roleIds) {
+  public ResponseEntity<?> updateUserRole(
+      @PathVariable UUID userId, @RequestBody Set<Long> roleIds) {
     try {
-      UUID userId = UUID.fromString(id);
+      // UUID userId = UUID.fromString(id);
       UserDTO updatedUser = userService.updateUserRole(userId, roleIds);
       return ResponseEntity.ok().body(ApiResp.builder().success(true).data(updatedUser).build());
     } catch (IllegalArgumentException ex) {

@@ -1,6 +1,6 @@
 package com.digiex.utility.web.repository;
 
-import com.digiex.utility.web.model.User;
+import com.digiex.utility.entity.User;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

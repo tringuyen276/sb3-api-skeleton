@@ -1,6 +1,6 @@
 package com.digiex.utility.web.model.dto;
 
-import com.digiex.utility.web.model.Permission;
+import com.digiex.utility.entity.Permission;
 import jakarta.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 import lombok.AllArgsConstructor;
@@ -28,5 +28,13 @@ public class PermissionDTO {
     permission.setName(this.name);
     permission.setCreatedAt(this.createAt);
     return permission;
+  }
+
+  public PermissionDTO convertToDTO(Permission p) {
+    return PermissionDTO.builder()
+        .id(p.getId())
+        .name(p.getName())
+        .createAt(this.getCreateAt())
+        .build();
   }
 }
